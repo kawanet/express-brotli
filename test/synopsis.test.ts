@@ -4,7 +4,6 @@ import {strict as assert} from "assert";
 import {Request, Response} from "express";
 import {mwsupertest} from "middleware-supertest";
 import * as zlib from "zlib";
-import {requestHandler} from "express-intercept";
 
 // ## SYNOPSIS
 
@@ -12,8 +11,6 @@ const express = require("express");
 const brotli = require("../lib/express-brotli");
 
 const app = express();
-
-app.use(requestHandler().getRequest(req => delete req.headers["accept-encoding"]));
 
 app.use(brotli.compress(/html/));
 
@@ -27,17 +24,25 @@ const TITLE = __filename.split("/").pop();
 
 describe(TITLE, () => {
     it("SYNOPSIS", async () => {
-        await mwsupertest(app)
+        const test = mwsupertest(app)
+            .getRequest(req => {
+                assert.equal(req.header("accept-encoding"), "br");
+            })
             .getResponse(res => {
                 assert.equal(res.statusCode, 200);
-                assert.equal(res.getHeader("transfer-encoding"), "br");
+                assert.equal(res.getHeader("content-encoding"), "br");
             })
-            .get("/")
-            .set({te: "br"})
+            .get("/");
+
+        // hack to avoid unzip by superagent
+        (test as any)._shouldUnzip = () => false;
+
+        await test
+            .set({"accept-encoding": "br"})
             .responseType("blob")
             .then(res => {
                 assert.equal(res.status, 200);
-                assert.equal(res.header["transfer-encoding"], "br");
+                assert.equal(res.header["content-encoding"], "br");
                 const body = zlib.brotliDecompressSync(res.body);
                 assert.equal(String(body), "<html>your content</html>");
             });

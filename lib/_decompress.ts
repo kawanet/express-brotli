@@ -11,40 +11,25 @@ const transforms = {
     deflate: zlib.createInflate,
 } as { [encoding: string]: () => Transform };
 
-/**
- * Returns an RequestHandler to decompress the Express.js response stream.
- * It work for any `Content-Type`s if `contentType` parameter is not given.
- */
-
-export function decompress(contentType?: RegExp): RequestHandler {
+export function _decompress(contentType: RegExp, requestKey: string, responseKey: string): RequestHandler {
     return responseHandler()
-        // compress only when OK
-        .if(res => +res.statusCode === 200)
 
         // decompress only for types specified
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
 
         // decompress only when compressed
-        .if(res => !!(res.getHeader("content-encoding") || res.getHeader("transfer-encoding")))
+        .if(res => !!(matchFirst(transforms, res.getHeader(responseKey))))
 
+        // perform decompress
         .interceptStream((upstream, req, res) => {
-
-            // find uncompress transform
-            const contentEncoding = match(res.getHeader("content-encoding"));
-            const transferEncoding = match(res.getHeader("transfer-encoding"));
-            const transform = transforms[contentEncoding] || transforms[transferEncoding];
-            if (!transform) return;
-
-            res.removeHeader("content-encoding");
-            res.removeHeader("transfer-encoding");
+            const encoding = matchFirst(transforms, res.getHeader(responseKey));
+            const transform = transforms[encoding];
+            res.removeHeader(responseKey);
             res.removeHeader("content-length");
-
             return upstream.pipe(transform());
         });
 }
 
-function match(str: string | any): string {
-    if (/br/.test(str)) return "br";
-    if (/gzip/.test(str)) return "gzip";
-    if (/deflate/.test(str)) return "deflate";
+function matchFirst<T>(map: { [key: string]: T }, key: any): string {
+    return String(key).split(/\W+/).filter(e => !!map[e]).shift();
 }

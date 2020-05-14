@@ -1,0 +1,15 @@
+{
+  "include": [
+    "../lib/"
+  ],
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": ".",
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,
+    "types": [
+      "express",
+      "node"
+    ]
+  }
+}
