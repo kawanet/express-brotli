@@ -14,17 +14,7 @@ const textTypes = /^text|json|javascript|svg|xml|utf-8/i;
 
 export function compress(contentType?: RegExp): RequestHandler {
     if (!arguments.length) contentType = textTypes;
-    return _compress(contentType, "accept-encoding", "content-encoding");
-}
-
-/**
- * `TE` and `Transfer-Encoding` version of `compress()` method.
- * Most app developers rarely need to use this.
- */
-
-export function compressTE(contentType?: RegExp): RequestHandler {
-    if (!arguments.length) contentType = textTypes;
-    return _compress(contentType, "te", "transfer-encoding");
+    return _compress(contentType);
 }
 
 /**
@@ -34,14 +24,5 @@ export function compressTE(contentType?: RegExp): RequestHandler {
  */
 
 export function decompress(contentType?: RegExp): RequestHandler {
-    return _decompress(contentType, "accept-encoding", "content-encoding");
-}
-
-/**
- * `TE` and `Transfer-Encoding` version of `decompress()` method.
- * Most app developers rarely need to use this.
- */
-
-export function decompressTE(contentType?: RegExp): RequestHandler {
-    return _decompress(contentType, "te", "transfer-encoding");
+    return _decompress(contentType);
 }

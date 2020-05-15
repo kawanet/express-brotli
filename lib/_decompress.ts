@@ -11,20 +11,20 @@ const transforms = {
     deflate: zlib.createInflate,
 } as { [encoding: string]: () => Transform };
 
-export function _decompress(contentType: RegExp, requestKey: string, responseKey: string): RequestHandler {
+export function _decompress(contentType: RegExp): RequestHandler {
     return responseHandler()
 
         // decompress only for types specified
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
 
         // decompress only when compressed
-        .if(res => !!(matchFirst(transforms, res.getHeader(responseKey))))
+        .if(res => !!(matchFirst(transforms, res.getHeader("content-encoding"))))
 
         // perform decompress
         .interceptStream((upstream, req, res) => {
-            const encoding = matchFirst(transforms, res.getHeader(responseKey));
+            const encoding = matchFirst(transforms, res.getHeader("content-encoding"));
             const transform = transforms[encoding];
-            res.removeHeader(responseKey);
+            res.removeHeader("content-encoding");
             res.removeHeader("content-length");
             return upstream.pipe(transform());
         });

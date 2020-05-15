@@ -11,11 +11,11 @@ const transforms = {
     deflate: zlib.createDeflate,
 } as { [encoding: string]: () => Transform };
 
-export function _compress(contentType: RegExp, requestKey: string, responseKey: string): RequestHandler {
+export function _compress(contentType: RegExp): RequestHandler {
     return responseHandler()
 
         // Accept-Encoding: or TE: required
-        .for(req => !!matchFirst(transforms, req.header(requestKey)))
+        .for(req => !!matchFirst(transforms, req.header("accept-encoding")))
 
         // compress only when OK
         .if(res => +res.statusCode === 200)
@@ -27,14 +27,12 @@ export function _compress(contentType: RegExp, requestKey: string, responseKey: 
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
 
         // ignore when the response is already compressed
-        .if(res => !(matchFirst(transforms, res.getHeader(responseKey))))
         .if(res => !(matchFirst(transforms, res.getHeader("content-encoding"))))
-        .if(res => !(matchFirst(transforms, res.getHeader("transfer-encoding"))))
 
         .interceptStream((upstream, req, res) => {
-            const encoding = matchFirst(transforms, req.header(requestKey));
+            const encoding = matchFirst(transforms, req.header("accept-encoding"));
             const transform = transforms[encoding];
-            res.setHeader(responseKey, encoding);
+            res.setHeader("content-encoding", encoding);
             res.removeHeader("content-length");
             return upstream.pipe(transform());
         });

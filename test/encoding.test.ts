@@ -5,55 +5,44 @@ import * as express from "express";
 import {requestHandler} from "express-intercept";
 import {mwsupertest} from "middleware-supertest";
 
-import {compress, compressTE, decompress, decompressTE} from "../lib/express-brotli";
+import {compress, decompress} from "../lib/express-brotli";
 
 const TITLE = __filename.split("/").pop();
 
 const responseHeader = (key: string) => requestHandler().use((req, res) => res.type("html").send(req.headers[key] || "-"));
 
 describe(TITLE, () => {
-    testFormat("gzip", false);
-    testFormat("gzip", true);
-
-    testFormat("deflate", false);
-    testFormat("deflate", true);
-
-    testFormat("br", false);
-    testFormat("br", true);
+    testFormat("gzip");
+    testFormat("deflate");
+    testFormat("br");
 });
 
-function testFormat(format: string, TE: boolean) {
-
-    const incoming = TE ? "te" : "accept-encoding";
-    const removing = TE ? "accept-encoding" : "te";
-    const outgoing = TE ? "transfer-encoding" : "content-encoding";
-    const compressHandler = TE ? compressTE() : compress();
-    const decompressHandler = TE ? decompressTE() : decompress();
+function testFormat(format: string) {
 
     const router = express.Router();
-    router.use(requestHandler().getRequest(req => req.headers[incoming] = format));
-    router.use(requestHandler().getRequest(req => delete req.headers[removing]));
-    router.use(compressHandler);
-    router.use(responseHeader(incoming));
+    router.use(requestHandler().getRequest(req => req.headers["accept-encoding"] = format));
+    router.use(requestHandler().getRequest(req => delete req.headers["te"]));
+    router.use(compress());
+    router.use(responseHeader("accept-encoding"));
 
-    it(outgoing + ": " + format + " compression", async () => {
+    it("content-encoding" + ": " + format + " compression", async () => {
         const app = express().use(router);
 
         await mwsupertest(app)
             .getString(body => assert.equal(body, format))
-            .getResponse(res => assert.equal(res.getHeader(outgoing), format))
+            .getResponse(res => assert.equal(res.getHeader("content-encoding"), format))
             .get("/")
             // .set({"Accept-Encoding": "gzip, deflate"})
             .expect(200)
-            .expect(outgoing, format);
+            .expect("content-encoding", format);
     });
 
-    it(outgoing + ": " + format + " decompression", async () => {
-        const app = express().use(decompressHandler, router);
+    it("content-encoding" + ": " + format + " decompression", async () => {
+        const app = express().use(decompress(), router);
 
         await mwsupertest(app)
             .getString(body => assert.equal(body, format))
-            .getResponse(res => assert.equal(res.getHeader(outgoing) || "uncompressed", "uncompressed"))
+            .getResponse(res => assert.equal(res.getHeader("content-encoding") || "uncompressed", "uncompressed"))
             .get("/")
             // .set({"Accept-Encoding": "identity"})
             .expect(200)
