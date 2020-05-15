@@ -3,9 +3,15 @@
 import {RequestHandler} from "express";
 import {responseHandler} from "express-intercept";
 
+type Tester = { test: (str: string) => boolean };
+
 const textTypes = /^text|json|javascript|svg|xml|utf-8/i;
 
-const encodings = /(^|\W)(br|gzip|deflate)(\W|$)/;
+const contentEncoding = /(^|\W)(br|gzip|deflate)(\W|$)/;
+
+const contentLength: Tester = {test: length => +length !== 0}; // true when undefined
+
+const statusCode = /^(200)$/;
 
 /**
  * Returns an RequestHandler to compress the Express.js response stream.
@@ -18,20 +24,17 @@ export function compress(contentType?: RegExp): RequestHandler {
 
     return responseHandler()
 
-        // Accept-Encoding: required
-        .for(req => encodings.test(String(req.header("accept-encoding"))))
-
-        // compress only when OK
-        .if(res => +res.statusCode === 200)
+        // work only when OK
+        .if(res => statusCode.test(String(res.statusCode)))
 
         // skip when Content-Length: 0 specified
-        .if(res => +res.getHeader("content-length") !== 0)
+        .if(res => contentLength.test(String(res.getHeader("content-length"))))
 
         // comppress only for types specified
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
 
         // skip when the response is already compressed
-        .if(res => !encodings.test(String(res.getHeader("content-encoding"))))
+        .if(res => !contentEncoding.test(String(res.getHeader("content-encoding"))))
 
         .compressResponse();
 }
@@ -49,7 +52,7 @@ export function decompress(contentType?: RegExp): RequestHandler {
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
 
         // decompress only when compressed
-        .if(res => encodings.test(String(res.getHeader("content-encoding"))))
+        .if(res => contentEncoding.test(String(res.getHeader("content-encoding"))))
 
         // perform decompress
         .decompressResponse();
