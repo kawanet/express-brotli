@@ -5,16 +5,21 @@ import {responseHandler} from "express-intercept";
 
 type Tester = { test: (str: string) => boolean };
 
+// compress if Content-Type: is a text-like type per default
 const textTypes = /^text|json|javascript|svg|xml|utf-8/i;
 
 const contentEncoding = /(^|\W)(br|gzip|deflate)(\W|$)/;
 
-const contentLength: Tester = {test: length => +length !== 0}; // true when undefined
+// skip when Content-Length: 0 specified
+const contentLengthNotZero: Tester = {test: length => length !== "0"};
 
-const statusCode = /^(200)$/;
+// compress if statusCode is OK
+const statusCodeOK = /^(200)$/;
 
 export interface CompressOptions {
+    contentLength?: RegExp | Tester;
     contentType?: RegExp | Tester;
+    statusCode?: RegExp | Tester;
 }
 
 /**
@@ -24,24 +29,17 @@ export interface CompressOptions {
  */
 
 export function compress(options?: CompressOptions): RequestHandler {
-    let {contentType} = options || {} as CompressOptions;
+    let {contentLength, contentType, statusCode} = options || {} as CompressOptions;
 
+    if (!contentLength) contentLength = contentLengthNotZero;
     if (!contentType) contentType = textTypes;
+    if (!statusCode) statusCode = statusCodeOK;
 
     return responseHandler()
-
-        // work only when OK
         .if(res => statusCode.test(String(res.statusCode)))
-
-        // skip when Content-Length: 0 specified
         .if(res => contentLength.test(String(res.getHeader("content-length"))))
-
-        // comppress only for types specified
-        .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
-
-        // skip when the response is already compressed
+        .if(res => contentType.test(String(res.getHeader("content-type"))))
         .if(res => !contentEncoding.test(String(res.getHeader("content-encoding"))))
-
         .compressResponse();
 }
 
@@ -52,16 +50,12 @@ export function compress(options?: CompressOptions): RequestHandler {
  */
 
 export function decompress(options?: CompressOptions): RequestHandler {
-    let {contentType} = options || {} as CompressOptions;
+    let {contentLength, contentType, statusCode} = options || {} as CompressOptions;
 
     return responseHandler()
-
-        // decompress only for types specified
+        .if(res => !statusCode || statusCode.test(String(res.statusCode)))
+        .if(res => !contentLength || contentLength.test(String(res.getHeader("content-length"))))
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
-
-        // decompress only when compressed
-        .if(res => contentEncoding.test(String(res.getHeader("content-encoding"))))
-
-        // perform decompress
+        .if(res => !contentEncoding || contentEncoding.test(String(res.getHeader("content-encoding"))))
         .decompressResponse();
 }
