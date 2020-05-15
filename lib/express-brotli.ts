@@ -13,14 +13,20 @@ const contentLength: Tester = {test: length => +length !== 0}; // true when unde
 
 const statusCode = /^(200)$/;
 
+export interface CompressOptions {
+    contentType?: RegExp | Tester;
+}
+
 /**
  * Returns an RequestHandler to compress the Express.js response stream.
  * It performs compression only for text-ish `Content-Type`s which includes `/^text|json|javascript|svg|xml|utf-8/i` per default.
  * It supports `Accept-Encoding` request header and `Content-Encoding` response header.
  */
 
-export function compress(contentType?: RegExp): RequestHandler {
-    if (!arguments.length) contentType = textTypes;
+export function compress(options?: CompressOptions): RequestHandler {
+    let {contentType} = options || {} as CompressOptions;
+
+    if (!contentType) contentType = textTypes;
 
     return responseHandler()
 
@@ -45,7 +51,9 @@ export function compress(contentType?: RegExp): RequestHandler {
  * It supports `Accept-Encoding` request header and `Content-Encoding` response header.
  */
 
-export function decompress(contentType?: RegExp): RequestHandler {
+export function decompress(options?: CompressOptions): RequestHandler {
+    let {contentType} = options || {} as CompressOptions;
+
     return responseHandler()
 
         // decompress only for types specified

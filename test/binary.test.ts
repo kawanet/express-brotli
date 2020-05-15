@@ -14,8 +14,8 @@ const responseBinary = (body: Buffer) => requestHandler().use((req, res) => res.
 describe(TITLE, () => {
     const content = Buffer.from("BINARY");
     const router = express.Router();
-    router.use(decompress(/^application/));
-    router.use(compress(/^text/));
+    router.use(decompress({contentType: /^application/}));
+    router.use(compress({contentType: /^text/}));
     router.use(responseBinary(content));
 
     it("binary compression skipped", async () => {
@@ -31,7 +31,7 @@ describe(TITLE, () => {
     });
 
     it("binary compression", async () => {
-        const app = express().use(compress(/^application/), router);
+        const app = express().use(compress({contentType: /^application/}), router);
 
         await mwsupertest(app)
             .getResponse(res => assert.ok(res.getHeader("content-encoding"))) // gzip or deflate

@@ -14,8 +14,8 @@ const responseText = (body: string) => requestHandler().use((req, res) => res.ty
 describe(TITLE, () => {
     const content = "TEXT";
     const router = express.Router();
-    router.use(decompress(/^application/));
-    router.use(compress(/^text/));
+    router.use(decompress({contentType: /^application/}));
+    router.use(compress({contentType: /^text/}));
     router.use(responseText(content));
 
     it("text compression", async () => {
@@ -37,7 +37,7 @@ describe(TITLE, () => {
     });
 
     it("text decompression", async () => {
-        const app = express().use(decompress(/^text/), router);
+        const app = express().use(decompress({contentType: /^text/}), router);
 
         await mwsupertest(app)
             .getResponse(res => assert.equal(res.getHeader("content-encoding") || "uncompressed", "uncompressed"))

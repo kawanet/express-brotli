@@ -12,9 +12,9 @@ const brotli = require("express-brotli");
 
 const app = express();
 
-app.use(brotli.compress(/html/));
+app.use(brotli.compress({contentType: /html/}));
 
-app.use(brotli.decompress(/html/));
+app.use(brotli.decompress({contentType: /html/}));
 
 app.use((req, res) => res.type("html").send("<html>your content</html>"));
 ```
