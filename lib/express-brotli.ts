@@ -17,9 +17,9 @@ const contentLengthNotZero: Tester = {test: length => length !== "0"};
 const statusCodeOK = /^(200)$/;
 
 export interface CompressOptions {
-    contentLength?: RegExp | Tester;
-    contentType?: RegExp | Tester;
-    statusCode?: RegExp | Tester;
+    contentLength?: RegExp | { test: (str: string) => boolean };
+    contentType?: RegExp | { test: (str: string) => boolean };
+    statusCode?: RegExp | { test: (str: string) => boolean };
 }
 
 /**
@@ -36,9 +36,9 @@ export function compress(options?: CompressOptions): RequestHandler {
     if (!statusCode) statusCode = statusCodeOK;
 
     return responseHandler()
-        .if(res => statusCode.test(String(res.statusCode)))
-        .if(res => contentLength.test(String(res.getHeader("content-length"))))
-        .if(res => contentType.test(String(res.getHeader("content-type"))))
+        .if(res => !statusCode || statusCode.test(String(res.statusCode)))
+        .if(res => !contentLength || contentLength.test(String(res.getHeader("content-length"))))
+        .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
         .if(res => !contentEncoding.test(String(res.getHeader("content-encoding"))))
         .compressResponse();
 }
@@ -56,6 +56,6 @@ export function decompress(options?: CompressOptions): RequestHandler {
         .if(res => !statusCode || statusCode.test(String(res.statusCode)))
         .if(res => !contentLength || contentLength.test(String(res.getHeader("content-length"))))
         .if(res => !contentType || contentType.test(String(res.getHeader("content-type"))))
-        .if(res => !contentEncoding || contentEncoding.test(String(res.getHeader("content-encoding"))))
+        .if(res => contentEncoding.test(String(res.getHeader("content-encoding"))))
         .decompressResponse();
 }

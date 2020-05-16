@@ -40,7 +40,7 @@ describe(TITLE, () => {
         await test
             .set({"accept-encoding": "br"})
             .responseType("blob")
-            .then(res => {
+            .expect(res => {
                 assert.equal(res.status, 200);
                 assert.equal(res.header["content-encoding"], "br");
                 const body = zlib.brotliDecompressSync(res.body);

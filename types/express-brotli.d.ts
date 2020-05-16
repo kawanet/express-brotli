@@ -1,11 +1,14 @@
 import { RequestHandler } from "express";
-declare type Tester = {
-    test: (str: string) => boolean;
-};
 export interface CompressOptions {
-    contentLength?: RegExp | Tester;
-    contentType?: RegExp | Tester;
-    statusCode?: RegExp | Tester;
+    contentLength?: RegExp | {
+        test: (str: string) => boolean;
+    };
+    contentType?: RegExp | {
+        test: (str: string) => boolean;
+    };
+    statusCode?: RegExp | {
+        test: (str: string) => boolean;
+    };
 }
 /**
  * Returns an RequestHandler to compress the Express.js response stream.
@@ -19,4 +22,3 @@ export declare function compress(options?: CompressOptions): RequestHandler;
  * It supports `Accept-Encoding` request header and `Content-Encoding` response header.
  */
 export declare function decompress(options?: CompressOptions): RequestHandler;
-export {};

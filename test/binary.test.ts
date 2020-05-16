@@ -27,7 +27,7 @@ describe(TITLE, () => {
             .get("/")
             // .set({"Accept-Encoding": "gzip, deflate"})
             .expect(200)
-            .then(res => assert.equal(toHEX(res.body), toHEX(content)));
+            .expect(res => assert.equal(toHEX(res.body), toHEX(content)));
     });
 
     it("binary compression", async () => {
@@ -38,7 +38,7 @@ describe(TITLE, () => {
             .get("/")
             // .set({"Accept-Encoding": "gzip, deflate"})
             .expect(200)
-            .then(res => assert.equal(toHEX(res.body), toHEX(content)));
+            .expect(res => assert.equal(toHEX(res.body), toHEX(content)));
     });
 
     it("binary decompression", async () => {
@@ -49,14 +49,14 @@ describe(TITLE, () => {
             .get("/")
             // .set({"Accept-Encoding": "identity"})
             .expect(200)
-            .then(res => assert.equal(toHEX(res.body), toHEX(content)));
+            .expect(res => assert.equal(toHEX(res.body), toHEX(content)));
 
         await mwsupertest(app)
             .getBuffer(body => assert.equal(toHEX(body), toHEX(content)))
             .get("/")
             // .set({"Accept-Encoding": "identity"})
             .expect(200)
-            .then(res => assert.equal(toHEX(res.body), toHEX(content)));
+            .expect(res => assert.equal(toHEX(res.body), toHEX(content)));
     });
 });
 

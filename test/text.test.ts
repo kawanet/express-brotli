@@ -26,14 +26,14 @@ describe(TITLE, () => {
             .get("/")
             // .set({"Accept-Encoding": "gzip, deflate"})
             .expect(200)
-            .then(res => assert.equal(res.text, content));
+            .expect(res => assert.equal(res.text, content));
 
         await mwsupertest(app)
             .getString(body => assert.equal(body, content))
             .get("/")
             // .set({"Accept-Encoding": "gzip, deflate"})
             .expect(200)
-            .then(res => assert.equal(res.text, content));
+            .expect(res => assert.equal(res.text, content));
     });
 
     it("text decompression", async () => {
@@ -44,13 +44,13 @@ describe(TITLE, () => {
             .get("/")
             // .set({"Accept-Encoding": "identity"})
             .expect(200)
-            .then(res => assert.equal(res.text, content));
+            .expect(res => assert.equal(res.text, content));
 
         await mwsupertest(app)
             .getString(body => assert.equal(body, content))
             .get("/")
             // .set({"Accept-Encoding": "identity"})
             .expect(200)
-            .then(res => assert.equal(res.text, content));
+            .expect(res => assert.equal(res.text, content));
     });
 });
