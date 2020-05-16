@@ -28,6 +28,7 @@ for more detail.
 
 ## SEE ALSO
 
+- https://github.com/kawanet/express-compress
 - https://github.com/kawanet/express-intercept
 
 ## LICENSE
