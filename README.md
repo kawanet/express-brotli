@@ -2,6 +2,7 @@
 
 Express middlewares to comress/uncompress response with encoding: brotli, gzip and deflate
 
+[![Node.js CI](https://github.com/kawanet/express-brotli/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/kawanet/express-brotli/actions/)
 [![npm version](https://badge.fury.io/js/express-brotli.svg)](https://www.npmjs.com/package/express-brotli)
 
 ## SYNOPSIS
@@ -21,7 +22,7 @@ app.use((req, res) => res.type("html").send("<html>your content</html>"));
 
 ## METHODS
 
-See TypeScript definition
+See TypeScript declaration
 [express-brotli.d.ts](https://github.com/kawanet/express-brotli/blob/master/types/express-brotli.d.ts)
 for detail.
 
