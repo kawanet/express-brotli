@@ -27,11 +27,11 @@
   ],
   "homepage": "https://github.com/kawanet/express-brotli#readme",
   "keywords": [
-    "assert",
+    "brotli",
+    "compression",
     "expressjs",
-    "middleware",
-    "supertest",
-    "test"
+    "gzip",
+    "middleware"
   ],
   "license": "MIT",
   "main": "lib/express-brotli.js",

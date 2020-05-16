@@ -24,7 +24,7 @@ app.use((req, res) => res.type("html").send("<html>your content</html>"));
 
 See TypeScript declaration
 [express-brotli.d.ts](https://github.com/kawanet/express-brotli/blob/master/types/express-brotli.d.ts)
-for detail.
+for more detail.
 
 ## SEE ALSO
 
