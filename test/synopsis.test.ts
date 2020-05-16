@@ -8,13 +8,13 @@ import * as zlib from "zlib";
 // ## SYNOPSIS
 
 const express = require("express");
-const brotli = require("../lib/express-brotli");
+const {compress, decompress} = require("../lib/express-compress");
 
 const app = express();
 
-app.use(brotli.compress(/html/));
+app.use(compress({contentType: /html/}));
 
-app.use(brotli.decompress(/html/));
+app.use(decompress({contentType: /html/}));
 
 app.use((req: Request, res: Response) => res.type("html").send("<html>your content</html>"));
 

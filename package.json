@@ -1,6 +1,6 @@
 {
-  "name": "express-brotli",
-  "description": "Express middlewares to comress/uncompress response with encoding: brotli, gzip and deflate",
+  "name": "express-compress",
+  "description": "Express middlewares to comress/decompress response with encoding: brotli, gzip and deflate",
   "version": "0.8.0",
   "author": "Yusuke Kawasaki <u-suke@kawa.net>",
   "contributors": [
@@ -22,22 +22,23 @@
   "files": [
     "LICENSE",
     "README.md",
-    "types/express-brotli.d.ts",
+    "types/express-compress.d.ts",
     "lib/"
   ],
-  "homepage": "https://github.com/kawanet/express-brotli#readme",
+  "homepage": "https://github.com/kawanet/express-compress#readme",
   "keywords": [
     "brotli",
     "compression",
+    "deflate",
     "expressjs",
     "gzip",
     "middleware"
   ],
   "license": "MIT",
-  "main": "lib/express-brotli.js",
+  "main": "lib/express-compress.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kawanet/express-brotli.git"
+    "url": "git+https://github.com/kawanet/express-compress.git"
   },
   "scripts": {
     "build": "npm run build-lib && npm run build-types",
@@ -48,5 +49,5 @@
     "test": "npm run mocha",
     "tsc-watch": "tsc --watch"
   },
-  "typings": "./types/express-brotli.d.ts"
+  "typings": "./types/express-compress.d.ts"
 }

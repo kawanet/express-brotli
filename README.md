@@ -1,21 +1,21 @@
-# express-brotli
+# express-compress
 
-Express middlewares to comress/uncompress response with encoding: brotli, gzip and deflate
+Express middlewares to comress/decompress response with encoding: brotli, gzip and deflate
 
-[![Node.js CI](https://github.com/kawanet/express-brotli/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/kawanet/express-brotli/actions/)
-[![npm version](https://badge.fury.io/js/express-brotli.svg)](https://www.npmjs.com/package/express-brotli)
+[![Node.js CI](https://github.com/kawanet/express-compress/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/kawanet/express-compress/actions/)
+[![npm version](https://badge.fury.io/js/express-compress.svg)](https://www.npmjs.com/package/express-compress)
 
 ## SYNOPSIS
 
 ```js
 const express = require("express");
-const brotli = require("express-brotli");
+const {compress, decompress} = require("express-compress");
 
 const app = express();
 
-app.use(brotli.compress({contentType: /html/}));
+app.use(compress({contentType: /html/}));
 
-app.use(brotli.decompress({contentType: /html/}));
+app.use(decompress({contentType: /html/}));
 
 app.use((req, res) => res.type("html").send("<html>your content</html>"));
 ```
@@ -23,7 +23,7 @@ app.use((req, res) => res.type("html").send("<html>your content</html>"));
 ## METHODS
 
 See TypeScript declaration
-[express-brotli.d.ts](https://github.com/kawanet/express-brotli/blob/master/types/express-brotli.d.ts)
+[express-compress.d.ts](https://github.com/kawanet/express-compress/blob/master/types/express-compress.d.ts)
 for more detail.
 
 ## SEE ALSO

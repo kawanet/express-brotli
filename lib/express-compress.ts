@@ -1,4 +1,4 @@
-// express-brotli.ts
+// express-compress.ts
 
 import {RequestHandler} from "express";
 import {responseHandler} from "express-intercept";
