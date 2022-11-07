@@ -1,7 +1,10 @@
 // express-compress.ts
 
-import {RequestHandler} from "express";
 import {responseHandler} from "express-intercept";
+
+import type * as types from "../types/express-compress";
+
+type CompressOptions = types.CompressOptions;
 
 type Tester = { test: (str: string) => boolean };
 
@@ -16,19 +19,13 @@ const contentLengthNotZero: Tester = {test: length => length !== "0"};
 // compress if statusCode is OK
 const statusCodeOK = /^(200)$/;
 
-export interface CompressOptions {
-    contentLength?: RegExp | { test: (str: string) => boolean };
-    contentType?: RegExp | { test: (str: string) => boolean };
-    statusCode?: RegExp | { test: (str: string) => boolean };
-}
-
 /**
  * Returns an RequestHandler to compress the Express.js response stream.
  * It performs compression only for text-ish `Content-Type`s which includes `/^text|json|javascript|svg|xml|utf-8/i` per default.
  * It supports `Accept-Encoding` request header and `Content-Encoding` response header.
  */
 
-export function compress(options?: CompressOptions): RequestHandler {
+export const compress: typeof types.compress = options => {
     let {contentLength, contentType, statusCode} = options || {} as CompressOptions;
 
     if (!contentLength) contentLength = contentLengthNotZero;
@@ -49,7 +46,7 @@ export function compress(options?: CompressOptions): RequestHandler {
  * It supports `Accept-Encoding` request header and `Content-Encoding` response header.
  */
 
-export function decompress(options?: CompressOptions): RequestHandler {
+export const decompress: typeof types.decompress = options => {
     let {contentLength, contentType, statusCode} = options || {} as CompressOptions;
 
     return responseHandler()

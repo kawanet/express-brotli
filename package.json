@@ -15,15 +15,15 @@
     "@types/node": "^18.11.9",
     "@types/supertest": "^2.0.12",
     "express": "^4.18.2",
-    "middleware-supertest": "git+https://github.com/kawanet/middleware-supertest.git",
+    "middleware-supertest": "^1.0.0",
     "mocha": "^10.1.0",
     "typescript": "^4.8.4"
   },
   "files": [
     "LICENSE",
     "README.md",
-    "lib/",
-    "types/express-compress.d.ts"
+    "lib/*.js",
+    "types/*.d.ts"
   ],
   "homepage": "https://github.com/kawanet/express-compress#readme",
   "keywords": [
@@ -41,11 +41,10 @@
     "url": "git+https://github.com/kawanet/express-compress.git"
   },
   "scripts": {
-    "build": "npm run build-lib && npm run build-types",
-    "build-lib": "./node_modules/.bin/tsc -p .",
-    "build-types": "./node_modules/.bin/tsc -p types",
+    "build": "./node_modules/.bin/tsc -p .",
     "fixpack": "fixpack",
     "mocha": "./node_modules/.bin/mocha -R spec test/*.js",
+    "prepack": "npm run build && npm test",
     "test": "npm run mocha",
     "tsc-watch": "tsc --watch"
   },

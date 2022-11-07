@@ -5,7 +5,7 @@ import * as express from "express";
 import {requestHandler} from "express-intercept";
 import {mwsupertest} from "middleware-supertest";
 
-import {compress, decompress} from "../lib/express-compress";
+import {compress, decompress} from "../";
 
 const TITLE = __filename.split("/").pop();
 
