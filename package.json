@@ -1,29 +1,29 @@
 {
   "name": "express-compress",
-  "description": "Express middlewares to comress/decompress response with encoding: brotli, gzip and deflate",
-  "version": "0.8.0",
+  "description": "Express middlewares to compress/decompress response with encoding: brotli, gzip and deflate",
+  "version": "1.0.0",
   "author": "Yusuke Kawasaki <u-suke@kawa.net>",
   "contributors": [
     "Yusuke Kawasaki <u-suke@kawa.net>"
   ],
   "dependencies": {
-    "express-intercept": "^0.8.0"
+    "express-intercept": "^1.0.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.6",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^14.0.1",
-    "@types/supertest": "^2.0.9",
-    "express": "^4.17.1",
-    "middleware-supertest": "git+https://github.com/kawanet/middleware-supertest.git",
-    "mocha": "^7.1.2",
-    "typescript": "^3.9.2"
+    "@types/express": "^4.17.14",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "@types/supertest": "^2.0.12",
+    "express": "^4.18.2",
+    "middleware-supertest": "^1.0.0",
+    "mocha": "^10.1.0",
+    "typescript": "^4.8.4"
   },
   "files": [
     "LICENSE",
     "README.md",
-    "lib/",
-    "types/express-compress.d.ts"
+    "lib/*.js",
+    "types/*.d.ts"
   ],
   "homepage": "https://github.com/kawanet/express-compress#readme",
   "keywords": [
@@ -41,11 +41,10 @@
     "url": "git+https://github.com/kawanet/express-compress.git"
   },
   "scripts": {
-    "build": "npm run build-lib && npm run build-types",
-    "build-lib": "./node_modules/.bin/tsc -p .",
-    "build-types": "./node_modules/.bin/tsc -p types",
+    "build": "./node_modules/.bin/tsc -p .",
     "fixpack": "fixpack",
     "mocha": "./node_modules/.bin/mocha -R spec test/*.js",
+    "prepack": "npm run build && npm test",
     "test": "npm run mocha",
     "tsc-watch": "tsc --watch"
   },

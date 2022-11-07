@@ -1,7 +1,7 @@
 #!/usr/bin/env mocha -R spec
 
 import {strict as assert} from "assert";
-import {Request, Response} from "express";
+import type {Request, Response} from "express";
 import {mwsupertest} from "middleware-supertest";
 import * as zlib from "zlib";
 
